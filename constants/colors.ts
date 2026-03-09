@@ -1,12 +1,43 @@
-// template
-const tintColorLight = "#2f95dc";
+const COLORS = {
+  bg: '#070B14',
+  surface: '#0F1724',
+  surface2: '#1A2540',
+  surface3: '#242E4C',
+  border: '#1E2A45',
+  borderLight: '#2A3A5C',
+  accent: '#00E5B4',
+  accentDim: 'rgba(0,229,180,0.15)',
+  accentDim2: 'rgba(0,229,180,0.08)',
+  gold: '#E8C547',
+  goldDim: 'rgba(232,197,71,0.15)',
+  text: '#F0F4FF',
+  textMuted: '#6B7A9F',
+  textSecondary: '#A0AECF',
+  danger: '#FF4D6D',
+  dangerDim: 'rgba(255,77,109,0.15)',
+  success: '#00D68F',
+  successDim: 'rgba(0,214,143,0.15)',
+  warning: '#FFA940',
+  warningDim: 'rgba(255,169,64,0.15)',
+  white: '#FFFFFF',
+  black: '#000000',
+  overlay: 'rgba(7,11,20,0.85)',
+};
 
 export default {
   light: {
-    text: "#000",
-    background: "#fff",
-    tint: tintColorLight,
-    tabIconDefault: "#ccc",
-    tabIconSelected: tintColorLight,
+    text: COLORS.text,
+    background: COLORS.bg,
+    tint: COLORS.accent,
+    tabIconDefault: COLORS.textMuted,
+    tabIconSelected: COLORS.accent,
   },
+  dark: {
+    text: COLORS.text,
+    background: COLORS.bg,
+    tint: COLORS.accent,
+    tabIconDefault: COLORS.textMuted,
+    tabIconSelected: COLORS.accent,
+  },
+  ...COLORS,
 };
