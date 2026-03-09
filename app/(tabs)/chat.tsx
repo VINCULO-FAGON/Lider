@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   aiBubbleWrap: {
     alignItems: "flex-start",
     marginBottom: 16,
-    maxWidth: "90%",
+    maxWidth: "100%",
   },
   aiBubbleHeader: {
     flexDirection: "row",
@@ -596,14 +596,14 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingBottom: 8,
+    paddingBottom: 12,
   },
   aiBubbleText: {
     color: Colors.text,
     fontSize: 15,
     fontFamily: "Inter_400Regular",
     lineHeight: 23,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   bubbleActions: {
     flexDirection: "row",
@@ -611,7 +611,8 @@ const styles = StyleSheet.create({
     gap: 4,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
-    paddingTop: 6,
+    paddingTop: 8,
+    marginTop: 4,
   },
   bubbleActionBtn: {
     padding: 6,
