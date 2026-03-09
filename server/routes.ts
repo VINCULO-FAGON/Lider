@@ -4,13 +4,13 @@ import OpenAI from "openai";
 
 // Use Replit AI Integrations - env vars are auto-configured
 function getOpenAI(): OpenAI {
-  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY || process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error("AI_INTEGRATIONS_OPENAI_API_KEY not configured");
+    throw new Error("OpenAI API Key not configured. Please set OPENAI_API_KEY in Secrets.");
   }
   return new OpenAI({
     apiKey,
-    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
   });
 }
 
@@ -171,10 +171,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("API Base URL:", process.env.AI_INTEGRATIONS_OPENAI_BASE_URL);
 
       const stream = await getOpenAI().chat.completions.create({
-        model: "gpt-5.2",
+        model: "gpt-4o",
         messages: [...systemMessages, ...messages],
         stream: true,
-        max_completion_tokens: 8192,
+        max_completion_tokens: 4096,
       });
 
       for await (const chunk of stream) {
