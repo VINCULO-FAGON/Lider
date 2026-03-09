@@ -102,6 +102,7 @@ export default function ChatScreen() {
   const { messages, setMessages, isStreaming, setIsStreaming, showTyping, setShowTyping, loadMessages, addMessage, clearMessages, getLatestEstadoContext, loadEstado } = useChat();
   const [input, setInput] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const initializedRef = useRef(false);
 
@@ -290,6 +291,19 @@ export default function ChatScreen() {
     ]);
   };
 
+  const handleMicrophone = useCallback(async () => {
+    if (isRecording) {
+      setIsRecording(false);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      return;
+    }
+    
+    setIsRecording(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Alert.alert("Micrófono", "Característica de voice chat en desarrollo. Por ahora, escribe tu mensaje.");
+    setIsRecording(false);
+  }, [isRecording]);
+
   const reversed = [...messages].reverse();
 
   const renderItem = useCallback(({ item }: { item: ChatMessage }) => (
@@ -350,8 +364,15 @@ export default function ChatScreen() {
 
       <View style={[styles.inputArea, { paddingBottom: bottomPad + 8 }]}>
         <View style={styles.inputRow}>
-          <Pressable onPress={handlePickFile} style={styles.inputActionBtn}>
-            <Ionicons name="attach-outline" size={22} color={Colors.textMuted} />
+          <Pressable onPress={handlePickFile} style={styles.inputActionBtn} disabled={isStreaming}>
+            <Ionicons name="attach-outline" size={20} color={Colors.textMuted} />
+          </Pressable>
+          <Pressable 
+            onPress={handleMicrophone} 
+            style={[styles.inputActionBtn, isRecording && styles.inputActionBtnActive]}
+            disabled={isStreaming}
+          >
+            <Ionicons name={isRecording ? "mic" : "mic-outline"} size={20} color={isRecording ? Colors.accent : Colors.textMuted} />
           </Pressable>
           <View style={styles.inputBox}>
             <TextInput
@@ -390,6 +411,12 @@ export default function ChatScreen() {
           <View style={styles.speakingBanner}>
             <Ionicons name="volume-high" size={14} color={Colors.accent} />
             <Text style={styles.speakingText}>LÍDER está hablando...</Text>
+          </View>
+        )}
+        {isRecording && (
+          <View style={styles.recordingBanner}>
+            <View style={styles.recordingPulse} />
+            <Text style={styles.recordingText}>Grabando audio...</Text>
           </View>
         )}
       </View>
@@ -620,9 +647,13 @@ const styles = StyleSheet.create({
   },
   inputActionBtn: {
     width: 40,
-    height: 44,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  inputActionBtnActive: {
+    backgroundColor: Colors.surface3,
+    borderRadius: 8,
   },
   inputBox: {
     flex: 1,
@@ -666,6 +697,25 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   speakingText: {
+    fontSize: 12,
+    fontFamily: "Inter_500Medium",
+    color: Colors.accent,
+  },
+  recordingBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingTop: 8,
+  },
+  recordingPulse: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.accent,
+    opacity: 0.7,
+  },
+  recordingText: {
     fontSize: 12,
     fontFamily: "Inter_500Medium",
     color: Colors.accent,
