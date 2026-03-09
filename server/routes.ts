@@ -163,6 +163,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      console.log("API Key present:", !!process.env.AI_INTEGRATIONS_OPENAI_API_KEY);
+      console.log("API Base URL:", process.env.AI_INTEGRATIONS_OPENAI_BASE_URL);
+
       const stream = await getOpenAI().chat.completions.create({
         model: "gpt-5.2",
         messages: [...systemMessages, ...messages],

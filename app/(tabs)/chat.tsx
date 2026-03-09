@@ -193,7 +193,14 @@ export default function ChatScreen() {
 
     } catch (err) {
       setShowTyping(false);
-      const errorMsg: ChatMessage = { id: generateMsgId(), role: "assistant", content: "Lo siento, tuve un problema de conexión. Intenta nuevamente.", createdAt: new Date().toISOString() };
+      console.error("Chat error:", err);
+      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+      const errorMsg: ChatMessage = { 
+        id: generateMsgId(), 
+        role: "assistant", 
+        content: `Error: ${errorMessage}`, 
+        createdAt: new Date().toISOString() 
+      };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsStreaming(false);
