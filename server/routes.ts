@@ -2,10 +2,20 @@ import type { Express } from "express";
 import { createServer, type Server } from "node:http";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing OpenAI API key. Set AI_INTEGRATIONS_OPENAI_API_KEY or OPENAI_API_KEY.");
+    }
+    _openai = new OpenAI({
+      apiKey,
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    });
+  }
+  return _openai;
+}
 
 const LIDER_SYSTEM_PROMPT = `Eres LÍDER, una inteligencia artificial especializada en rehabilitación y prevención de drogas, 
 con profundo conocimiento en Terapia Cognitivo-Conductual (TCC) y la filosofía "Yo Decreto" de la Comunidad.
@@ -75,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const stream = await openai.chat.completions.create({
+      const stream = await getOpenAI().chat.completions.create({
         model: "gpt-5.2",
         messages: [...systemMessages, ...messages],
         stream: true,
@@ -112,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.setHeader("X-Accel-Buffering", "no");
       res.flushHeaders();
 
-      const stream = await openai.chat.completions.create({
+      const stream = await getOpenAI().chat.completions.create({
         model: "gpt-audio",
         modalities: ["text", "audio"],
         audio: { voice: "onyx", format: "pcm16" },
@@ -156,7 +166,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { toFile } = await import("openai");
       const file = await toFile(audioBuffer, "audio.wav", { type: "audio/wav" });
 
-      const transcription = await openai.audio.transcriptions.create({
+      const transcription = await getOpenAI().audio.transcriptions.create({
         file,
         model: "gpt-4o-mini-transcribe",
       });
