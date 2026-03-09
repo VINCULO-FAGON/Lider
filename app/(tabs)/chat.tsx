@@ -107,7 +107,7 @@ export default function ChatScreen() {
   const initializedRef = useRef(false);
 
   const topPad = Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
-  const bottomPad = Platform.OS === "web" ? 34 : insets.bottom;
+  const bottomPad = Platform.OS === "web" ? 0 : insets.bottom;
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -369,7 +369,7 @@ export default function ChatScreen() {
         showsVerticalScrollIndicator={false}
       />
 
-      <View style={[styles.inputArea, { paddingBottom: bottomPad + 8 }]}>
+      <View style={[styles.inputArea, { paddingBottom: bottomPad }]}>
         <View style={styles.inputRow}>
           <Pressable onPress={handlePickFile} style={styles.inputActionBtn} disabled={isStreaming}>
             <Ionicons name="attach-outline" size={20} color={Colors.textMuted} />
@@ -647,6 +647,7 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingHorizontal: 12,
     paddingTop: 10,
+    paddingBottom: 12,
   },
   inputRow: {
     flexDirection: "row",

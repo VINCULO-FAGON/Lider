@@ -4,8 +4,12 @@ import OpenAI from "openai";
 
 // Use Replit AI Integrations - env vars are auto-configured
 function getOpenAI(): OpenAI {
+  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("AI_INTEGRATIONS_OPENAI_API_KEY not configured");
+  }
   return new OpenAI({
-    apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || "dummy-key",
+    apiKey,
     baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
   });
 }
