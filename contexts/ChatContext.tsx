@@ -2,6 +2,13 @@ import React, { createContext, useContext, useState, useMemo, ReactNode, useCall
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "./AuthContext";
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: string;
+}
+
 export interface EstadoEntry {
   id: string;
   date: string;
@@ -16,10 +23,19 @@ export interface EstadoEntry {
 }
 
 interface ChatContextValue {
+  messages: ChatMessage[];
+  isStreaming: boolean;
+  showTyping: boolean;
   estadoEntries: EstadoEntry[];
-  loadEstado: () => Promise<void>;
+  loadMessages: () => Promise<void>;
+  addMessage: (msg: ChatMessage) => void;
+  clearMessages: () => Promise<void>;
   saveEstado: (entry: Omit<EstadoEntry, "id" | "createdAt">) => Promise<EstadoEntry>;
+  loadEstado: () => Promise<void>;
   getLatestEstadoContext: () => string;
+  setIsStreaming: (v: boolean) => void;
+  setShowTyping: (v: boolean) => void;
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -32,9 +48,33 @@ export function generateMsgId(): string {
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
   const [estadoEntries, setEstadoEntries] = useState<EstadoEntry[]>([]);
 
+  const messagesKey = `@lider_messages_${user?.rut ?? "guest"}`;
   const estadoKey = `@lider_estado_${user?.rut ?? "guest"}`;
+
+  const loadMessages = useCallback(async () => {
+    try {
+      const raw = await AsyncStorage.getItem(messagesKey);
+      if (raw) setMessages(JSON.parse(raw));
+    } catch { }
+  }, [messagesKey]);
+
+  const addMessage = useCallback((msg: ChatMessage) => {
+    setMessages((prev) => {
+      const updated = [...prev, msg];
+      AsyncStorage.setItem(messagesKey, JSON.stringify(updated)).catch(() => { });
+      return updated;
+    });
+  }, [messagesKey]);
+
+  const clearMessages = useCallback(async () => {
+    await AsyncStorage.removeItem(messagesKey);
+    setMessages([]);
+  }, [messagesKey]);
 
   const loadEstado = useCallback(async () => {
     try {
@@ -73,11 +113,20 @@ Observaciones: ${latest.observaciones || "Sin observaciones"}
   }, [estadoEntries]);
 
   const value = useMemo(() => ({
+    messages,
+    isStreaming,
+    showTyping,
     estadoEntries,
-    loadEstado,
+    loadMessages,
+    addMessage,
+    clearMessages,
     saveEstado,
+    loadEstado,
     getLatestEstadoContext,
-  }), [estadoEntries, loadEstado, saveEstado, getLatestEstadoContext]);
+    setIsStreaming,
+    setShowTyping,
+    setMessages,
+  }), [messages, isStreaming, showTyping, estadoEntries, loadMessages, addMessage, clearMessages, saveEstado, loadEstado, getLatestEstadoContext]);
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }

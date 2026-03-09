@@ -54,7 +54,7 @@ const TCC_PILLARS = [
 export default function PerfilScreen() {
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
-  const { estadoEntries } = useChat();
+  const { estadoEntries, messages, clearMessages } = useChat();
   const [showCapacidades, setShowCapacidades] = useState(false);
   const [showTCC, setShowTCC] = useState(false);
 
@@ -77,8 +77,16 @@ export default function PerfilScreen() {
   };
 
   const handleClearData = () => {
-    Alert.alert("Sin chat", "El chat con LÍDER ha sido deshabilitado.", [
-      { text: "OK", style: "default" },
+    Alert.alert("Borrar datos", "¿Deseas borrar todos tus mensajes con LÍDER?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Borrar",
+        style: "destructive",
+        onPress: () => {
+          clearMessages();
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        },
+      },
     ]);
   };
 

@@ -55,6 +55,7 @@ function getDateStr(): string {
 }
 
 const QUICK_ACTIONS = [
+  { icon: "chatbubbles", label: "Hablar con\nLÍDER", route: "/(tabs)/chat", color: Colors.accent, glow: Colors.accent },
   { icon: "heart", label: "Tomar\nEstado", route: "/(tabs)/estado", color: Colors.gold, glow: Colors.gold },
   { icon: "book-outline", label: "Mis\nRegistros", route: "/(tabs)/estado", color: Colors.warning, glow: Colors.warning },
   { icon: "person", label: "Mi\nPerfil", route: "/(tabs)/perfil", color: Colors.success, glow: Colors.success },
