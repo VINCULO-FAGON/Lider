@@ -231,7 +231,19 @@ function setupErrorHandler(app: express.Application) {
   setupBodyParsing(app);
   setupRequestLogging(app);
 
-  if (process.env.NODE_ENV === "development") {
+  const staticWebBuildPath = path.resolve(process.cwd(), "static-build", "web");
+  if (fs.existsSync(staticWebBuildPath)) {
+    app.use(express.static(staticWebBuildPath));
+    app.use((req, res, next) => {
+      if (req.path.startsWith("/api")) return next();
+      const indexPath = path.join(staticWebBuildPath, "index.html");
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        next();
+      }
+    });
+  } else if (process.env.NODE_ENV === "development") {
     const metroProxy = createProxyMiddleware({
       target: "http://localhost:8081",
       changeOrigin: true,
