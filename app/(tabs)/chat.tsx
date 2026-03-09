@@ -371,21 +371,11 @@ export default function ChatScreen() {
 
       <View style={[styles.inputArea, { paddingBottom: bottomPad }]}>
         <View style={styles.inputRow}>
-          <Pressable onPress={handlePickFile} style={styles.inputActionBtn} disabled={isStreaming}>
-            <Ionicons name="attach-outline" size={20} color={Colors.textMuted} />
-          </Pressable>
-          <Pressable 
-            onPress={handleMicrophone} 
-            style={[styles.inputActionBtn, isRecording && styles.inputActionBtnActive]}
-            disabled={isStreaming}
-          >
-            <Ionicons name={isRecording ? "mic" : "mic-outline"} size={20} color={isRecording ? Colors.accent : Colors.textMuted} />
-          </Pressable>
           <View style={styles.inputBox}>
             <TextInput
               ref={inputRef}
               style={styles.textInput}
-              placeholder="Escribe a LÍDER..."
+              placeholder="Escribe tu mensaje..."
               placeholderTextColor={Colors.textMuted}
               value={input}
               onChangeText={setInput}
