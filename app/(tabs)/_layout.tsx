@@ -13,10 +13,6 @@ function NativeTabLayout() {
         <Icon sf={{ default: "house", selected: "house.fill" }} />
         <Label>Inicio</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="chat">
-        <Icon sf={{ default: "bubble.left.and.bubble.right", selected: "bubble.left.and.bubble.right.fill" }} />
-        <Label>LÍDER IA</Label>
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="estado">
         <Icon sf={{ default: "heart.text.clipboard", selected: "heart.text.clipboard.fill" }} />
         <Label>Mi Estado</Label>
@@ -64,13 +60,6 @@ function ClassicTabLayout() {
         options={{
           title: "Inicio",
           tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: "LÍDER IA",
-          tabBarIcon: ({ color }) => <Ionicons name="chatbubbles" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
