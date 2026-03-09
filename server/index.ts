@@ -1,5 +1,6 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
 import * as fs from "fs";
 import * as path from "path";
@@ -230,7 +231,26 @@ function setupErrorHandler(app: express.Application) {
   setupBodyParsing(app);
   setupRequestLogging(app);
 
-  configureExpoAndLanding(app);
+  if (process.env.NODE_ENV === "development") {
+    const metroProxy = createProxyMiddleware({
+      target: "http://localhost:8081",
+      changeOrigin: true,
+      ws: true,
+      on: {
+        error: (_err, _req, res) => {
+          if (res && "writeHead" in res) {
+            (res as Response).status(502).send("Metro bundler not ready yet — please wait a moment and refresh.");
+          }
+        },
+      },
+    });
+    app.use((req, _res, next) => {
+      if (req.path.startsWith("/api")) return next();
+      return metroProxy(req, _res, next);
+    });
+  } else {
+    configureExpoAndLanding(app);
+  }
 
   const server = await registerRoutes(app);
 
