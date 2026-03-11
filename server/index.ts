@@ -234,6 +234,34 @@ function setupErrorHandler(app: express.Application) {
   const staticWebBuildPath = path.resolve(process.cwd(), "static-build", "web");
   if (fs.existsSync(staticWebBuildPath)) {
     app.use(express.static(staticWebBuildPath));
+
+    app.use("/assets/node_modules", (req: Request, res: Response, next: NextFunction) => {
+      const requestedPath = req.path;
+      const nodeModulesRoot = path.resolve(process.cwd(), "node_modules");
+
+      const directPath = path.join(nodeModulesRoot, requestedPath);
+      if (fs.existsSync(directPath) && fs.statSync(directPath).isFile()) {
+        return res.sendFile(directPath);
+      }
+
+      const lastDot = requestedPath.lastIndexOf(".");
+      const secondLastDot = requestedPath.lastIndexOf(".", lastDot - 1);
+      if (secondLastDot !== -1 && lastDot !== -1) {
+        const possibleHash = requestedPath.slice(secondLastDot + 1, lastDot);
+        if (/^[a-f0-9]{32}$/.test(possibleHash)) {
+          const withoutHash =
+            requestedPath.slice(0, secondLastDot) +
+            requestedPath.slice(lastDot);
+          const resolvedPath = path.join(nodeModulesRoot, withoutHash);
+          if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile()) {
+            return res.sendFile(resolvedPath);
+          }
+        }
+      }
+
+      next();
+    });
+
     app.use((req, res, next) => {
       if (req.path.startsWith("/api")) return next();
       const indexPath = path.join(staticWebBuildPath, "index.html");
