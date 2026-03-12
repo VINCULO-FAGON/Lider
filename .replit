@@ -35,14 +35,6 @@ args = "Start App"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start Backend"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start Frontend"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Start application"
 
 [[workflows.workflow]]
@@ -59,35 +51,13 @@ task = "workflow.run"
 args = "Start Frontend"
 
 [[workflows.workflow]]
-name = "Start Backend"
+name = "Start application"
 author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run server:dev"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
-[[workflows.workflow]]
-name = "Start Frontend"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo 'Frontend served via Express static build on port 5000' && sleep infinity"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow]]
-name = "Start application"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo 'App running via Start Backend on port 5000' && sleep infinity"
-
-[workflows.workflow.metadata]
-outputType = "console"
