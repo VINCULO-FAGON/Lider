@@ -106,7 +106,8 @@ export default function ChatScreen() {
   const initializedRef = useRef(false);
 
   const topPad = Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
-  const bottomPad = Platform.OS === "web" ? 12 : insets.bottom;
+  const TAB_BAR_HEIGHT = 84;
+  const bottomPad = Platform.OS === "web" ? TAB_BAR_HEIGHT : insets.bottom;
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -319,7 +320,7 @@ export default function ChatScreen() {
     <KeyboardAvoidingView
       style={[styles.root]}
       behavior="padding"
-      keyboardVerticalOffset={Platform.OS === "web" ? 60 : 0}
+      keyboardVerticalOffset={Platform.OS === "web" ? TAB_BAR_HEIGHT : 0}
     >
       <View style={[styles.header, { paddingTop: topPad + 8 }]}>
         <LinearGradient colors={[Colors.accent, Colors.gold]} style={styles.headerAvatar}>
